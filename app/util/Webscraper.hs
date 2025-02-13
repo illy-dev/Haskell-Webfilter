@@ -1,16 +1,16 @@
 {-# LANGUAGE OverloadedStrings #-}
 
+module Webscraper where
+
 import Text.HTML.Scalpel
 import Data.Text (Text, pack, unpack, replace)
 import qualified Data.Text.IO as TIO
 
--- Define a type to represent the content we want to extract
 data WebContent = WebContent
     { headings :: [String]
     , paragraphs :: [String]
     } deriving (Show)
 
--- Scrape the headings and paragraphs from the page
 scrapeContent :: Scraper String WebContent
 scrapeContent = do
     h1s <- texts "h1"
@@ -23,11 +23,9 @@ scrapeContent = do
     let hs = concat [h1s, h2s, h3s, h4s, h5s, h6s]
     return $ WebContent hs ps
 
--- Fetch and scrape the content of the given URL
 fetchContent :: String -> IO (Maybe WebContent)
 fetchContent url = scrapeURL url scrapeContent
 
--- Remove problematic characters from a string
 sanitizeText :: String -> String
 sanitizeText = unpack 
              . replace (pack "\8220") (pack "") 
@@ -38,7 +36,6 @@ sanitizeText = unpack
              . replace (pack "\8226") (pack "") 
              . pack
 
--- Print the content
 printContent :: WebContent -> IO ()
 printContent (WebContent hs ps) = do
     mapM_ (TIO.putStrLn . pack . sanitizeText) hs
