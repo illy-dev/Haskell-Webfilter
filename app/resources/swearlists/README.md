@@ -1,0 +1,1 @@
+All word lists are from [chucknorris-io/swear-words](https://github.com/chucknorris-io/swear-words/)
