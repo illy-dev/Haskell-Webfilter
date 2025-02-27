@@ -1,10 +1,12 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Webscraper where
+module Util.Webscraper (fetchContent, printContent, scrapeContent, sanitizeText, WebContent(..)) where
 
 import Text.HTML.Scalpel
 import Data.Text (Text, pack, unpack, replace)
 import qualified Data.Text.IO as TIO
+import qualified Data.Text as T
+import Data.Char (isAlphaNum)
 
 data WebContent = WebContent
     { headings :: [String]
@@ -27,14 +29,7 @@ fetchContent :: String -> IO (Maybe WebContent)
 fetchContent url = scrapeURL url scrapeContent
 
 sanitizeText :: String -> String
-sanitizeText = unpack 
-             . replace (pack "\8220") (pack "") 
-             . replace (pack "\8222") (pack "") 
-             . replace (pack "\8203") (pack "") 
-             . replace (pack "\8211") (pack "") 
-             . replace (pack "\8217") (pack "") 
-             . replace (pack "\8226") (pack "") 
-             . pack
+sanitizeText = filter (\c -> isAlphaNum c || c == ' ')
 
 printContent :: WebContent -> IO ()
 printContent (WebContent hs ps) = do
@@ -43,7 +38,7 @@ printContent (WebContent hs ps) = do
 
 main :: IO ()
 main = do
-    let url = "https://de.wikipedia.org/wiki/Haskell_(Programmiersprache)"
+    let url = "https://en.wikipedia.org/wiki/haskell"
     result <- fetchContent url
     case result of
         Just content -> printContent content

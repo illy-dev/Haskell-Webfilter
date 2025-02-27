@@ -1,4 +1,4 @@
-module Wordfilter where
+module Util.Wordfilter (findWords, readFiles, baseDir) where
 
 import System.IO
 import Data.Char (toLower)
@@ -35,6 +35,5 @@ main :: IO ()
 main = do
     files <- listDirectory baseDir
     swearwords <- readFiles files
-    print swearwords
 
-    print $ findWords (words "test asdasda hallo") swearwords
+    print $ findWords (words "test asdasda hallo kacke") swearwords
